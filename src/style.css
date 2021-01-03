@@ -1,0 +1,8 @@
+.login{
+    border-left: solid;
+    border-left-color: #e6e6e8;
+    text-align: center;
+    border-left-width: thin;    
+    min-height: 100vh;
+    /* border: transpare?Snt; */
+}

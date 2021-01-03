@@ -1,0 +1,19 @@
+.pos-wrapper{
+    margin: calc(25%);
+    text-align: center;
+}
+
+a {
+    cursor: pointer;
+}
+
+.posElement h1{
+    border-bottom: solid;
+    border-bottom-color: #adade4;
+    border-bottom-width: thin;  
+    text-align: center;
+}
+
+#icon-magestore{
+    width: 80px;
+}
