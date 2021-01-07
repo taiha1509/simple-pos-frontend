@@ -1,25 +1,26 @@
-import {actionType} from '../constants/index';
+import { actionType } from '../constants/index';
 const INITIAL_STATE = {
-    
+    staff: {}
 }
 
 const staff = (state = INITIAL_STATE, action) => {
-    switch(action.type){
+    switch (action.type) {
         case actionType.LOGIN:
-            return{
+            return {
                 ...state,
                 isLogin: false,
                 isChooseLocation: false
             }
-        
-        case actionType.LOGOUT:
-            return{
-                ...state,
-                isLogin: false 
+
+        case actionType.LOGOUT: {
+            state = undefined;
+            return {
+                state
             }
+        }
 
         case actionType.CHOOSE_LOCATION:
-            return{
+            return {
                 ...state,
                 isChooseLocation: true
             }
@@ -31,7 +32,7 @@ const staff = (state = INITIAL_STATE, action) => {
                 notification_message: 'login successfully',
                 staff: action.payload
             }
-            
+
         case actionType.LOGIN_FAILURE:
             return {
                 ...state,
@@ -44,6 +45,6 @@ const staff = (state = INITIAL_STATE, action) => {
     }
 }
 
-export{
+export {
     staff
 }

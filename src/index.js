@@ -5,15 +5,26 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import { CookiesProvider } from "react-cookie";
-import store from './store';
+import store, { persistor } from './store';
 import 'antd/dist/antd.css';
+import { BrowserRouter } from 'react-router-dom';
+import { PersistGate } from 'redux-persist/integration/react';
+import { Space, Spin } from 'antd';
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <CookiesProvider>
-        <App />
-      </CookiesProvider>
+      <PersistGate loading={<div style={{ textAlign: 'center', margin: '45vh' }}>
+                              <Space size='middle'>
+                                <Spin size='large' />
+                              </Space>
+                            </div>} persistor={persistor}>
+        <BrowserRouter>
+          <CookiesProvider>
+            <App />
+          </CookiesProvider>
+        </BrowserRouter>
+      </PersistGate>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

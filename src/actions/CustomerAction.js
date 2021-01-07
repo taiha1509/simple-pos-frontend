@@ -9,7 +9,18 @@ const fetchCustomerFulfiled = (payload) => ({
     payload: payload
 })
 
+const chooseCustomer = (customer) => ({
+    type: actionType.CHOOSE_CUSTOMER,
+    payload: customer
+})
+
+const chooseGuest = () => ({
+    type: actionType.CHOOSE_GUEST,
+})
+
 export {
     fetchCustomer,
-    fetchCustomerFulfiled
+    fetchCustomerFulfiled,
+    chooseCustomer,
+    chooseGuest
 }

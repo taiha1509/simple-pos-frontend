@@ -1,38 +1,77 @@
 
 import React, { useState } from 'react';
 import { Modal, Button, Input } from 'antd';
+import { connect } from 'react-redux';
+import { chooseCustomer } from '../actions/CustomerAction';
 
-const AddCustomer = ({ isModalVisible, setIsModalVisiblle }) => {
-    const {Search} = Input;
+const AddCustomer = (props) => {
+    const { Search } = Input;
+
+    const [keySearch, setKeySearch] = useState('');
+
     const handleOk = () => {
-        setIsModalVisiblle(false);
+        props.setIsModalVisiblle(false);
     }
 
     const handeCancle = () => {
-        setIsModalVisiblle(false);
+        props.setIsModalVisiblle(false);
     }
 
-    const onSearch = () => {
+    const onSearch = (value, event) => {
+        setKeySearch(value);
+    }
 
+    const onChange = (e) => {
+        const value = e.target.value;
+        if (value == '')
+            setKeySearch('');
+    }
+
+    const chooseCustomer = (customer) => {
+        props.choooseCustomer(customer);
+        props.setIsModalVisiblle(false);
     }
 
     return (
         <>
             <Modal
-                visible={isModalVisible}
+                visible={props.isModalVisible}
                 onOk={handleOk}
                 onCancel={handeCancle}
                 width={375}
             >
-                <Button type='primary' onClick={() => {}}>Create Customer</Button>
-                <Search placeholder="input search text" onSearch={onSearch} style={{marginTop: "10px"}}/>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
+                <br />
+                <Search placeholder="input search text" onSearch={onSearch} style={{ marginTop: "10px" }} onChange={onChange} />
+                <br />
+                {props.list_customer.map((value, index) => {
+                    if (keySearch) {
+                        if (value.firstname.includes(keySearch) || value.lastname.includes(keySearch)) {
+                            return (
+                                <a onClick={() => chooseCustomer(value)} key={value.id}><p>{value.firstname + ' ' + value.lastname}</p></a>
+                            )
+                        }
+                    } else {
+                        return (
+                            <a onClick={() => chooseCustomer(value)} key={value.id}><p>{value.firstname + ' ' + value.lastname}</p></a>
+                        )
+                    }
+                })}
             </Modal>
         </>
     );
 
 }
 
-export default AddCustomer;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        list_customer: state.customer.data.items,
+    }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        choooseCustomer: (customer) => dispatch(chooseCustomer(customer)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddCustomer);

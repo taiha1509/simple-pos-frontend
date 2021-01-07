@@ -27,10 +27,11 @@ const loginFail = (resoponse) => ({
 })
 
 
+
 export {
     login,
     logout,
     chooseLocation,
     loginSuccessfully,
-    loginFail
+    loginFail,
 }

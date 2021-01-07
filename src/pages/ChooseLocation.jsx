@@ -22,13 +22,13 @@ const ChooseLocation = (props) => {
                 <Col span={6} >
                     <div className='pos-wrapper'>
                         <img src='/icon-login.png' id='icon-magestore' ></img>
-                        {props.listPos.map(element => {
+                        {props.staff ? props.staff.list_pos.map(element => {
                             return (
                                 <a onClick={() => dispatchChooseLoaction(element)} className='posElement'>
                                     <h1>{element.name}</h1>
                                 </a>
                             )
-                        })}
+                        }): ''}
                         <p style={{textAlign: 'center'}}>please choose your location</p>
                     </div>
                 </Col>
@@ -41,7 +41,7 @@ const ChooseLocation = (props) => {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        listPos: state.staff.staff.list_pos,
+        staff: state.staff.staff,
     }
 }
 
@@ -49,7 +49,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         chooseLocation: (payload) => {
             dispatch(chooseLocation(payload));
-            dispatch(fetchProduct());
+            dispatch(fetchProduct(null, 1, 10));
             dispatch(fetchOrder(payload));
             dispatch(fetchCustomer());
         },

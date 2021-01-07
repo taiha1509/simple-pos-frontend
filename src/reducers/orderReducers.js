@@ -3,7 +3,7 @@ import { actionType } from '../constants/index'
 
 
 const INITIAL_STATE = {
-    
+    order: {}
 }
 
 
@@ -23,9 +23,7 @@ const order = (state = INITIAL_STATE, action) => {
             }
 
         default:
-            return {
-                ...state
-            }
+            return state;
     }
 }
 

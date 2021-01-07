@@ -1,8 +1,7 @@
 import { actionType } from '../constants/index';
-import { fetchProduct, fetchProductFulfiled } from '../actions/ProductAction';
 
 const INITIAL_STATE = {
-    
+    product: {}
 }
 
 const product = (state = INITIAL_STATE, action) => {
