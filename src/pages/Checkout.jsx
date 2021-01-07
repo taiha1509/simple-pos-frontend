@@ -1,4 +1,4 @@
-import { Row, Col, Input, Popover, Button, Pagination, Modal } from 'antd';
+import { Row, Col, Input, Popover, Button, Pagination, Modal, Space, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import './css/checkout.css';
 import TabDrawer from './TabDrawer';
@@ -24,6 +24,17 @@ const Checkout = (props) => {
         staff: props.staff,
     }
 
+    useEffect(() => {
+        setTotalItemCurrentPage(0);
+    }, []);
+
+    useEffect(() => {
+        let cart_temp = Object.assign({}, props.cartProps);
+        cart_temp.customer = props.chosenCustomer;
+        props.cartChange(cart_temp);
+    }, [props.chosenCustomer]);
+
+    console.log('26 - rerender');
     const [visible, setVisible] = useState(false);
     const [currentCustomer, setCurrentCustomer] = useState({});
     const [tabDrawerVisible, setTabDrwerVisible] = useState(false);
@@ -81,6 +92,7 @@ const Checkout = (props) => {
 
     const handlePagination = (page, size) => {
         setCurrentPage(page);
+        console.log('set  page : ' + page + 'size : ' + size);
         setPageSize(size);
         props.fetchProduct(page, size);
     }
@@ -99,20 +111,12 @@ const Checkout = (props) => {
         let total_item = 0;
         props.cartProps.products.forEach((value, index) => {
             total_item += value.qty;
-        }); 
+        });
         console.log(total_item);
         return total_item;
     }
 
-    useEffect(() => {
-        setTotalItemCurrentPage(0);
-    });
 
-    useEffect(() => {
-        let cart_temp = Object.assign({}, props.cartProps);
-        cart_temp.customer = props.chosenCustomer;
-        props.cartChange(cart_temp);
-    }, [props.chosenCustomer]);
 
     const removeCustomer = () => {
         props.removeCustomer();
@@ -173,9 +177,11 @@ const Checkout = (props) => {
         props.cartChange(cart_temp);
     }
 
+    console.log(currentPage);
+
     return (
         <div>
-            <Row className="row-header">
+            { (!props.isLoadingProduct && !props.isLoadingOrder && !props.isLoadingCustomer) ? <div><Row className="row-header">
                 <Col span={1} className='align-center col1'>
                     <a onClick={() => setTabDrwerVisible(true)}><img id='menu-icon' src="icons8-menu-48.png" alt="image"></img></a>
                 </Col>
@@ -197,120 +203,124 @@ const Checkout = (props) => {
                 </Col>
             </Row>
 
-            <Row className="row-content">
-                <Col span={1} className='align-center col1'>
-                    <div className='icons-bar'>
-                        <a onClick={onAddComment}>
-                            <img src='icons8-comments.png'></img>
-                        </a>
-                    </div>
-                    <div className='icons-bar'>
-                        <a>
-                            <img src='delete-forever.png'></img>
-                        </a>
-                    </div>
-                    <div className='icons-bar'>
-                        <a>
-                            <img src='icons8-create-order-64.png'></img>
-                        </a>
-                    </div>
-                    {props.cartProps.total_price > 0 ? (<div className='icon-cart'>
-                        <a style={{ position: 'relative' }}>
-                            <img src='cart.png'></img>
-                            <p className='cart-item-qty'>{getTotalItem()}</p>
-                        </a>
-                    </div>) : ''}
-                </Col>
-                <Col span={5} className='align-center col2 cart-side'>
-                    <div class='customer-side'>
-                        <div class='customer-link-side'>
-                            <a style={{ display: "flex", width: '85%' }} onClick={() => { setIsModalAddCustomerVisible(true); }}>
-                                <img src='icons8-customer.png' alt='customer' id='icon-customer'></img>
-                                <h2 style={{ width: '80%', margin: 15, textAlign: 'left' }}>{props.chosenCustomer ? (props.chosenCustomer.firstname + ' ' + props.chosenCustomer.lastname) : 'Guest'}</h2>
-
+                <Row className="row-content">
+                    <Col span={1} className='align-center col1'>
+                        <div className='icons-bar'>
+                            <a onClick={onAddComment}>
+                                <img src='icons8-comments.png'></img>
                             </a>
-                            {props.chosenCustomer ? <a>
-                                <img onClick={removeCustomer} src='remove.png' style={{ right: '10px', top: '15px', position: 'absolute', width: '20px' }}></img>
-                            </a> : ''}
                         </div>
-                    </div>
+                        <div className='icons-bar'>
+                            <a>
+                                <img src='delete-forever.png'></img>
+                            </a>
+                        </div>
+                        <div className='icons-bar'>
+                            <a>
+                                <img src='icons8-create-order-64.png'></img>
+                            </a>
+                        </div>
+                        {props.cartProps.total_price > 0 ? (<div className='icon-cart'>
+                            <a style={{ position: 'relative' }}>
+                                <img src='cart.png'></img>
+                                <p className='cart-item-qty'>{getTotalItem()}</p>
+                            </a>
+                        </div>) : ''}
+                    </Col>
+                    <Col span={5} className='align-center col2 cart-side'>
+                        <div class='customer-side'>
+                            <div class='customer-link-side'>
+                                <a style={{ display: "flex", width: '85%' }} onClick={() => { setIsModalAddCustomerVisible(true); }}>
+                                    <img src='icons8-customer.png' alt='customer' id='icon-customer'></img>
+                                    <h2 style={{ width: '80%', margin: 15, textAlign: 'left' }}>{props.chosenCustomer ? (props.chosenCustomer.firstname + ' ' + props.chosenCustomer.lastname) : 'Guest'}</h2>
+
+                                </a>
+                                {props.chosenCustomer ? <a>
+                                    <img onClick={removeCustomer} src='remove.png' style={{ right: '10px', top: '15px', position: 'absolute', width: '20px' }}></img>
+                                </a> : ''}
+                            </div>
+                        </div>
 
 
-                    <div className='cart-content'>
-                        {props.cartProps.products.map((value, index) => {
-                            console.log(value.item);
-                            if (value.item) {
-                                return (
-                                    <a className='cart-item'>
-                                        <div className='cart-item-image'>
-                                            <img src={BASE_IMG_URL + value.item.custom_attributes[0].value} />
-                                            <p className='cart-item-qty'>{value.qty}</p>
-                                        </div>
-                                        <h3 className='cart-item-name'>{value.item.name}</h3>
-                                        <p className='cart-item-price'>${value.item.price * value.qty}</p>
-                                    </a>
-                                )
-                            }
-                        })}
-                    </div>
-
-                    <div className="interact-cart">
-                        <a className='hold-button' onClick={onHoldCart}><h1>Hold</h1></a>
-                        <a className='placeorder-button'><h1>${formatMoney(props.cartProps.total_price)}</h1></a>
-                    </div>
-                </Col>
-
-                {/* side for product */}
-                <Col span={18} className='col3' style={{ backgroundColor: '#f0f0f0' }}>
-                    <ul style={{ listStyleType: 'none', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                        {props.listProduct.map((value, index) => {
-                            if(value.type_id == 'simple' && value.qty > 0){
-                                if (value.name.toLowerCase().includes(keySearch.toLowerCase()) || value.sku.toLowerCase().includes(keySearch.toLowerCase())) {
-                                    // setTotalItemCurrentPage(e => e + 1);
-                                    total++;
+                        <div className='cart-content'>
+                            {props.cartProps.products.map((value, index) => {
+                                console.log(value.item);
+                                if (value.item) {
                                     return (
-                                        <li className='product-item'>
-                                            <a onClick={() => addToCart(value)}>
-                                                <img className='thumnail-image-product' src={BASE_IMG_URL + value.custom_attributes[0].value} ></img>
-                                                <div>
-                                                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                                                        <h3 style={{ width: '75%', paddingLeft: '10px' }}>{value.name} </h3>
-                                                        <h3 style={{ width: '25%' }}>{value.qty}</h3>
-                                                    </div>
-                                                    <div style={{ display: 'flex' }}>
-                                                        <h3 style={{ width: + 75 + '%', paddingLeft: '10px' }}>{value.sku}</h3>
-                                                        <h3 style={{ width: + 20 + '%' }}>{value.price} $</h3>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
+                                        <a className='cart-item'>
+                                            <div className='cart-item-image'>
+                                                <img src={BASE_IMG_URL + value.item.custom_attributes[0].value} />
+                                                <p className='cart-item-qty'>{value.qty}</p>
+                                            </div>
+                                            <h3 className='cart-item-name'>{value.item.name}</h3>
+                                            <p className='cart-item-price'>${value.item.price * value.qty}</p>
+                                        </a>
                                     )
                                 }
-                            }
+                            })}
+                        </div>
 
-                        })}
+                        <div className="interact-cart">
+                            <a className='hold-button' onClick={onHoldCart}><h1>Hold</h1></a>
+                            <a className='placeorder-button'><h1>${formatMoney(props.cartProps.total_price)}</h1></a>
+                        </div>
+                    </Col>
 
-                    </ul>
-                    <Pagination
-                        total={props.total_count}
-                        showSizeChanger
-                        showQuickJumper
-                        showTotal={showTotal}
-                        onChange={handlePagination}
-                        current={currentPage}
-                        onShowSizeChange={onShowSizeChange}
-                        pageSize={pageSize}
-                    />
-                </Col>
-            </Row>
+                    {/* side for product */}
+                    <Col span={18} className='col3' style={{ backgroundColor: '#f0f0f0' }}>
+                        <ul style={{ listStyleType: 'none', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
+                            {props.listProduct.map((value, index) => {
+                                if (value.type_id == 'simple' && value.qty > 0) {
+                                    if (value.name.toLowerCase().includes(keySearch.toLowerCase()) || value.sku.toLowerCase().includes(keySearch.toLowerCase())) {
+                                        // setTotalItemCurrentPage(e => e + 1);
+                                        total++;
+                                        return (
+                                            <li className='product-item'>
+                                                <a onClick={() => addToCart(value)}>
+                                                    <img className='thumnail-image-product' src={BASE_IMG_URL + value.custom_attributes[0].value} ></img>
+                                                    <div>
+                                                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                                                            <h3 style={{ width: '75%', paddingLeft: '10px' }}>{value.name} </h3>
+                                                            <h3 style={{ width: '25%' }}>{value.qty}</h3>
+                                                        </div>
+                                                        <div style={{ display: 'flex' }}>
+                                                            <h3 style={{ width: + 75 + '%', paddingLeft: '10px' }}>{value.sku}</h3>
+                                                            <h3 style={{ width: + 20 + '%' }}>{value.price} $</h3>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        )
+                                    }
+                                }
 
-            <TabDrawer visible={tabDrawerVisible} closeTabDrawer={closeTabDrawer} />
-            <AddCustomer isModalVisible={isModalAddCustomerVisible} setIsModalVisiblle={handleModalAddCustomerVisible} />
+                            })}
+                        </ul>
+                        <Pagination
+                            total={props.total_count}
+                            showSizeChanger
+                            showQuickJumper
+                            showTotal={showTotal}
+                            onChange={handlePagination}
+                            current={currentPage}
+                            onShowSizeChange={onShowSizeChange}
+                            pageSize={pageSize}
+                        />
+                    </Col>
+                </Row>
 
-            {/* comment side */}
-            <Modal title="Add comment to this order" visible={isModalCommentVisible} onOk={handleCommentOk} onCancel={handleCommentCancel}>
-                <TextArea rows={4} onChange={onChangComment} value={props.cartProps.comment} />
-            </Modal>
+                <TabDrawer visible={tabDrawerVisible} closeTabDrawer={closeTabDrawer} />
+                <AddCustomer isModalVisible={isModalAddCustomerVisible} setIsModalVisiblle={handleModalAddCustomerVisible} />
+
+                {/* comment side */}
+                <Modal title="Add comment to this order" visible={isModalCommentVisible} onOk={handleCommentOk} onCancel={handleCommentCancel}>
+                    <TextArea rows={4} onChange={onChangComment} value={props.cartProps.comment} />
+                </Modal></div> : <div style={{ textAlign: 'center', margin: '45vh' }}>
+                    <Space size='middle'>
+                        <Spin size='large' />
+                    </Space>
+                </div>
+            }
         </div>
     )
 }
@@ -322,12 +332,15 @@ const mapStateToProps = (state, ownProps) => {
         chosenCustomer: state.customer.chosenCustomer,
         staff: state.staff.staff.staff,
         cartProps: state.cart,
+        isLoadingProduct: state.product.isLoadingProduct,
+        isLoadingOrder: state.order.isLoadingOrder,
+        isLoadingCustomer: state.customer.isLoadingCustomer,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchProduct: (currentPage, pageSize) => dispatch(fetchProduct(null, currentPage, pageSize)),
+        fetchProduct: (page, pageSize) => dispatch(fetchProduct(null, page, pageSize)),
         removeCustomer: () => dispatch(chooseGuest()),
         cartChange: (payload) => dispatch(cartUpdate(payload)),
         cartHold: () => dispatch(holdCart()),

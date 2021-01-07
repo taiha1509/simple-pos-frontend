@@ -44,27 +44,17 @@ function App(props) {
       );
     }
     else {
-      if (!props.isLoadingProduct && !props.isLoadingOrder && !props.isLoadingCustomer) {
-        history.push('/checkout');
+      history.push('/checkout');
 
-        return (
-          <div>
-            <Switch>
-              <Route path="/checkout">
-                <Checkout />
-              </Route>
-            </Switch>
-          </div>
-        )
-      } else {
-        return (
-          <div style={{ textAlign: 'center', margin: '45vh' }}>
-            <Space size='middle'>
-              <Spin size='large' />
-            </Space>
-          </div>
-        )
-      }
+      return (
+        <div>
+          <Switch>
+            <Route path="/checkout">
+              <Checkout />
+            </Route>
+          </Switch>
+        </div>
+      )
     }
   } else {
     return (

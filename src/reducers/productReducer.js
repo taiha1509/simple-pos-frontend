@@ -7,6 +7,7 @@ const INITIAL_STATE = {
 const product = (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case actionType.FETCH_PRODUCT:
+            debugger
             return {
                 ...state,
                 isLoadingProduct: true,
