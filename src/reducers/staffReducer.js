@@ -22,7 +22,8 @@ const staff = (state = INITIAL_STATE, action) => {
         case actionType.CHOOSE_LOCATION:
             return {
                 ...state,
-                isChooseLocation: true
+                isChooseLocation: true,
+                posInfo: action.payload,
             }
 
         case actionType.LOGIN_SUCCESS:

@@ -10,8 +10,18 @@ const fetOrderFulfiled = (payload) => ({
     payload: payload
 });
 
+const placeorder = (payload) => ({
+    type: actionType.PLACEORDER,
+    payload: payload
+})
+
+const placeorderFulfiled = () => ({
+    type: actionType.PLACEORDER_FULFILED
+})
 
 export{
     fetchOrder,
-    fetOrderFulfiled
+    fetOrderFulfiled,
+    placeorder,
+    placeorderFulfiled
 }

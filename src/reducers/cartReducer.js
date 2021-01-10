@@ -9,6 +9,7 @@ const INITIAL_STATE = {
     customer: null,
     total_price: 0,
     staff: null,
+    processingPlaceorder: false
 }
 
 const cart = (state = INITIAL_STATE, action) => {
@@ -18,9 +19,36 @@ const cart = (state = INITIAL_STATE, action) => {
             return state;
         }
         case actionType.HOLD_CART:{
-            state = Object.assign({}, INITIAL_STATE);
-            return state;
+            // state = Object.assign({}, INITIAL_STATE);
+            return {
+                ...state,
+                products: [{
+                    qty: 0,
+                    item: null
+                }],
+                comment: '',
+                total_price: 0
+            };
         }
+
+        case actionType.PLACEORDER:
+            return {
+                ...state,
+                products: [{
+                    qty: 0,
+                    item: null
+                }],
+                comment: '',
+                total_price: 0,
+                processingPlaceorder: true
+            }
+
+        case actionType.PLACEORDER_FULFILED:
+            return {
+                ...state,
+                processingPlaceorder: false
+            }
+
             
         default:
             return state;

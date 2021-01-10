@@ -1,5 +1,5 @@
-import { Row, Col, Input, Popover, Button, Pagination, Modal, Space, Spin } from 'antd';
-import { useEffect, useState } from 'react';
+import { Row, Col, Input, Popover, Button, Pagination, Modal, Space, Spin, notification } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import './css/checkout.css';
 import TabDrawer from './TabDrawer';
 import AddCustomer from './ModalAddCustomer';
@@ -9,8 +9,9 @@ import { fetchProduct } from '../actions/ProductAction';
 import { range } from 'rxjs';
 import { chooseGuest } from '../actions/CustomerAction';
 import { formatter, formatMoney } from '../helper/index';
-import { BASE_IMG_URL } from '../constants/index';
+import { BASE_IMG_URL, logicType } from '../constants/index';
 import { cartUpdate, holdCart } from '../actions/CartAction';
+import { fetchOrder, placeorder } from '../actions/OrderAction';
 const Checkout = (props) => {
 
     const INITAL_CART = {
@@ -23,10 +24,17 @@ const Checkout = (props) => {
         total_price: 0,
         staff: props.staff,
     }
-
+    
     useEffect(() => {
-        setTotalItemCurrentPage(0);
-    }, []);
+        if (props.processingPlaceorder) {
+            setTimeout(() => {
+                notification.success({
+                    description: "order successfully",
+                    message: 'notification'
+                })
+            }, 1000);
+        }
+    }, [props.processingPlaceorder])
 
     useEffect(() => {
         let cart_temp = Object.assign({}, props.cartProps);
@@ -34,7 +42,8 @@ const Checkout = (props) => {
         props.cartChange(cart_temp);
     }, [props.chosenCustomer]);
 
-    console.log('26 - rerender');
+
+    //state of component
     const [visible, setVisible] = useState(false);
     const [currentCustomer, setCurrentCustomer] = useState({});
     const [tabDrawerVisible, setTabDrwerVisible] = useState(false);
@@ -42,8 +51,31 @@ const Checkout = (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [keySearch, setKeySearch] = useState('');
-    const [totalItemCurrentPage, setTotalItemCurrentPage] = useState(0);
     const [isModalCommentVisible, setIsModalCommentVisible] = useState(false);
+
+    const isMounted = useRef(false);
+
+    // hanfle search function
+    useEffect(() => {
+        if (isMounted.current) {
+            props.fetchProduct([{
+                field: 'name',
+                value: '%25' + keySearch + '%25',
+                condition_type: 'like',
+                logic: logicType.OR
+            },
+            {
+                field: 'sku',
+                value: '%25' + keySearch + '%25',
+                condition_type: 'like',
+                logic: logicType.OR
+            }
+            ], currentPage, pageSize);
+            // isMounted.current = false;
+        } else {
+            isMounted.current = true
+        }
+    }, [keySearch])
 
     let total = 0;
     let total_price = 0;
@@ -92,9 +124,8 @@ const Checkout = (props) => {
 
     const handlePagination = (page, size) => {
         setCurrentPage(page);
-        console.log('set  page : ' + page + 'size : ' + size);
         setPageSize(size);
-        props.fetchProduct(page, size);
+        props.fetchProduct(null, page, size);
     }
 
 
@@ -112,7 +143,6 @@ const Checkout = (props) => {
         props.cartProps.products.forEach((value, index) => {
             total_item += value.qty;
         });
-        console.log(total_item);
         return total_item;
     }
 
@@ -177,11 +207,14 @@ const Checkout = (props) => {
         props.cartChange(cart_temp);
     }
 
-    console.log(currentPage);
+    const onPlaceorder = () => {
+        const orderPayload = props.posInfo;
+        props.placeorder(props.cartProps, orderPayload);
+    }
 
     return (
         <div>
-            { (!props.isLoadingProduct && !props.isLoadingOrder && !props.isLoadingCustomer) ? <div><Row className="row-header">
+            { (!props.processingPlaceorder && !props.isLoadingProduct && !props.isLoadingOrder && !props.isLoadingCustomer) ? <div><Row className="row-header">
                 <Col span={1} className='align-center col1'>
                     <a onClick={() => setTabDrwerVisible(true)}><img id='menu-icon' src="icons8-menu-48.png" alt="image"></img></a>
                 </Col>
@@ -244,7 +277,6 @@ const Checkout = (props) => {
 
                         <div className='cart-content'>
                             {props.cartProps.products.map((value, index) => {
-                                console.log(value.item);
                                 if (value.item) {
                                     return (
                                         <a className='cart-item'>
@@ -262,7 +294,7 @@ const Checkout = (props) => {
 
                         <div className="interact-cart">
                             <a className='hold-button' onClick={onHoldCart}><h1>Hold</h1></a>
-                            <a className='placeorder-button'><h1>${formatMoney(props.cartProps.total_price)}</h1></a>
+                            <a className='placeorder-button' onClick={onPlaceorder}><h1>${formatMoney(props.cartProps.total_price)}</h1></a>
                         </div>
                     </Col>
 
@@ -271,27 +303,27 @@ const Checkout = (props) => {
                         <ul style={{ listStyleType: 'none', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
                             {props.listProduct.map((value, index) => {
                                 if (value.type_id == 'simple' && value.qty > 0) {
-                                    if (value.name.toLowerCase().includes(keySearch.toLowerCase()) || value.sku.toLowerCase().includes(keySearch.toLowerCase())) {
-                                        // setTotalItemCurrentPage(e => e + 1);
-                                        total++;
-                                        return (
-                                            <li className='product-item'>
-                                                <a onClick={() => addToCart(value)}>
-                                                    <img className='thumnail-image-product' src={BASE_IMG_URL + value.custom_attributes[0].value} ></img>
-                                                    <div>
-                                                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                                                            <h3 style={{ width: '75%', paddingLeft: '10px' }}>{value.name} </h3>
-                                                            <h3 style={{ width: '25%' }}>{value.qty}</h3>
-                                                        </div>
-                                                        <div style={{ display: 'flex' }}>
-                                                            <h3 style={{ width: + 75 + '%', paddingLeft: '10px' }}>{value.sku}</h3>
-                                                            <h3 style={{ width: + 20 + '%' }}>{value.price} $</h3>
-                                                        </div>
+                                    // if (value.name.toLowerCase().includes(keySearch.toLowerCase()) || value.sku.toLowerCase().includes(keySearch.toLowerCase())) {
+                                    // setTotalItemCurrentPage(e => e + 1);
+                                    total++;
+                                    return (
+                                        <li className='product-item'>
+                                            <a onClick={() => addToCart(value)}>
+                                                <img className='thumnail-image-product' src={BASE_IMG_URL + value.custom_attributes[0].value} ></img>
+                                                <div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                                                        <h3 style={{ width: '75%', paddingLeft: '10px' }}>{value.name} </h3>
+                                                        <h3 style={{ width: '25%' }}>{value.qty}</h3>
                                                     </div>
-                                                </a>
-                                            </li>
-                                        )
-                                    }
+                                                    <div style={{ display: 'flex' }}>
+                                                        <h3 style={{ width: + 75 + '%', paddingLeft: '10px' }}>{value.sku}</h3>
+                                                        <h3 style={{ width: + 20 + '%' }}>{value.price} $</h3>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    )
+                                    // }
                                 }
 
                             })}
@@ -326,24 +358,33 @@ const Checkout = (props) => {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    return {
-        listProduct: state.product.data.items,
-        total_count: state.product.data.total_count,
-        chosenCustomer: state.customer.chosenCustomer,
-        staff: state.staff.staff.staff,
-        cartProps: state.cart,
-        isLoadingProduct: state.product.isLoadingProduct,
-        isLoadingOrder: state.order.isLoadingOrder,
-        isLoadingCustomer: state.customer.isLoadingCustomer,
-    }
+    // if (state.product.data) {
+        return {
+            listProduct: state.product.data.items,
+            total_count: state.product.data.total_count,
+            chosenCustomer: state.customer.chosenCustomer,
+            staff: state.staff.staff.staff,
+            cartProps: state.cart,
+            isLoadingProduct: state.product.isLoadingProduct,
+            isLoadingOrder: state.order.isLoadingOrder,
+            isLoadingCustomer: state.customer.isLoadingCustomer,
+            posInfo: state.staff.posInfo,
+            processingPlaceorder: state.cart.processingPlaceorder,
+        }
+    // }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        fetchProduct: (page, pageSize) => dispatch(fetchProduct(null, page, pageSize)),
+        fetchProduct: (filter, page, pageSize) => dispatch(fetchProduct(filter, page, pageSize)),
         removeCustomer: () => dispatch(chooseGuest()),
         cartChange: (payload) => dispatch(cartUpdate(payload)),
         cartHold: () => dispatch(holdCart()),
+        placeorder: (cart, orderPayload) => {
+            dispatch(placeorder(cart));
+            dispatch(fetchProduct(null, 1, 10));
+            dispatch(fetchOrder(orderPayload));
+        },
     }
 }
 

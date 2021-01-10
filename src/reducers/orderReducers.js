@@ -21,7 +21,6 @@ const order = (state = INITIAL_STATE, action) => {
                 isLoadingOrder: false,
                 data: action.payload
             }
-
         default:
             return state;
     }

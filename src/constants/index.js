@@ -14,11 +14,16 @@ const actionType = {
     CHOOSE_GUEST: 'sstaff chooses a guest',
     HOLD_CART: 'staff click cart hold button',
     CART_UPDATE: 'cart updated',
+    PLACEORDER: 'placeorder',
+    PLACEORDER_FULFILED: 'placeorder success',
 }
 
+const logicType = {
+    AND: 'and',
+    OR: 'or',
+}
 
-
-export {actionType};
+export {actionType, logicType};
 
 
 export const BASE_IMG_URL = 'http://127.0.0.1/magento/pub/media/catalog/product';
