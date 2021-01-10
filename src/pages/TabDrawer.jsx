@@ -4,6 +4,7 @@ import { useCookies } from 'react-cookie';
 import { dispatch } from 'rxjs/internal/observable/pairs';
 import { logout } from '../actions/StaffAction';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const TabDrawer = (props) => {
 
@@ -41,25 +42,25 @@ const TabDrawer = (props) => {
         visible={props.visible}
         key="left"
         placement="left"
-        headerStyle={{color:'wheat', backgroundColor: '#262a41'}}
+        headerStyle={{ color: 'wheat', backgroundColor: '#262a41' }}
         drawerStyle={style}
       // footer={<h2>POS enterprise 4.11.9</h2>}
       >
-        <a href='/checkout'>
-          <h2 style={{color:'wheat'}}>Checkout</h2>
-        </a>
-        <a href='/checkout'>
-          <h2 style={{color:'wheat'}}>Order History</h2>
-        </a>
-        <a href='/checkout'>
-          <h2 style={{color:'wheat'}}>On-holds Orders</h2>
-        </a>
-        <a href='/checkout'>
-          <h2 style={{color:'wheat'}}>Settings</h2>
-        </a>
-        <a onClick={handleLogout}>
-          <h2 style={{color:'wheat'}}>Logout</h2>
-        </a>
+        <Link to='/checkout'>
+          <h2 style={{ color: 'wheat' }}>Checkout</h2>
+        </Link>
+        <Link to='/order-history'>
+          <h2 style={{ color: 'wheat' }}>Order History</h2>
+        </Link>
+        <Link to='/checkout'>
+          <h2 style={{ color: 'wheat' }}>On-holds Orders</h2>
+        </Link>
+        <Link to='/checkout'>
+          <h2 style={{ color: 'wheat' }}>Settings</h2>
+        </Link>
+        <Link onClick={handleLogout}>
+          <h2 style={{ color: 'wheat' }}>Logout</h2>
+        </Link>
       </Drawer>
     </div>
   );

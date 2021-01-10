@@ -1,16 +1,14 @@
-import logo from './logo.svg';
 import './App.css';
-import TabDrawer from './pages/TabDrawer.jsx';
 import "antd/dist/antd.css";
 import Login from './pages/Login';
 import Checkout from './pages/Checkout';
 import './style.css';
 import { connect } from 'react-redux';
 import ChooseLocation from './pages/ChooseLocation';
-import { Spin, Space } from 'antd';
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
-import { Route, Switch, Router, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory, Link } from 'react-router-dom';
+import OrderHistory from './pages/OrderHistory';
 function App(props) {
 
   const [cookies, setCookies, removeCookies] = useCookies(['isLogin', 'staff']);
@@ -44,15 +42,14 @@ function App(props) {
       );
     }
     else {
-      history.push('/checkout');
+      // history.push('/checkout');
 
       return (
         <div>
-          <Switch>
-            <Route path="/checkout">
-              <Checkout />
-            </Route>
-          </Switch>
+            <Switch>
+              <Route path="/checkout" component={Checkout} exact />
+              <Route path="/order-history" component={OrderHistory} exact />
+            </Switch>
         </div>
       )
     }
@@ -65,6 +62,20 @@ function App(props) {
   }
 
 }
+
+function Home() {
+  return <h2>Home</h2>;
+}
+
+function About() {
+  return <h2>About</h2>;
+}
+
+function Users() {
+  return <h2>Users</h2>;
+}
+
+
 
 const mapStateToProps = (state) => {
   return {

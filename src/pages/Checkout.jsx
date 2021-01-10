@@ -12,6 +12,7 @@ import { formatter, formatMoney } from '../helper/index';
 import { BASE_IMG_URL, logicType } from '../constants/index';
 import { cartUpdate, holdCart } from '../actions/CartAction';
 import { fetchOrder, placeorder } from '../actions/OrderAction';
+import ListProduct from './ListProduct';
 const Checkout = (props) => {
 
     const INITAL_CART = {
@@ -24,7 +25,7 @@ const Checkout = (props) => {
         total_price: 0,
         staff: props.staff,
     }
-    
+
     useEffect(() => {
         if (props.processingPlaceorder) {
             setTimeout(() => {
@@ -214,7 +215,7 @@ const Checkout = (props) => {
 
     return (
         <div>
-            { (!props.processingPlaceorder && !props.isLoadingProduct && !props.isLoadingOrder && !props.isLoadingCustomer) ? <div><Row className="row-header">
+            { (!props.isLoadingOrder && !props.isLoadingCustomer) ? <div><Row className="row-header">
                 <Col span={1} className='align-center col1'>
                     <a onClick={() => setTabDrwerVisible(true)}><img id='menu-icon' src="icons8-menu-48.png" alt="image"></img></a>
                 </Col>
@@ -300,44 +301,17 @@ const Checkout = (props) => {
 
                     {/* side for product */}
                     <Col span={18} className='col3' style={{ backgroundColor: '#f0f0f0' }}>
-                        <ul style={{ listStyleType: 'none', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                            {props.listProduct.map((value, index) => {
-                                if (value.type_id == 'simple' && value.qty > 0) {
-                                    // if (value.name.toLowerCase().includes(keySearch.toLowerCase()) || value.sku.toLowerCase().includes(keySearch.toLowerCase())) {
-                                    // setTotalItemCurrentPage(e => e + 1);
-                                    total++;
-                                    return (
-                                        <li className='product-item'>
-                                            <a onClick={() => addToCart(value)}>
-                                                <img className='thumnail-image-product' src={BASE_IMG_URL + value.custom_attributes[0].value} ></img>
-                                                <div>
-                                                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                                                        <h3 style={{ width: '75%', paddingLeft: '10px' }}>{value.name} </h3>
-                                                        <h3 style={{ width: '25%' }}>{value.qty}</h3>
-                                                    </div>
-                                                    <div style={{ display: 'flex' }}>
-                                                        <h3 style={{ width: + 75 + '%', paddingLeft: '10px' }}>{value.sku}</h3>
-                                                        <h3 style={{ width: + 20 + '%' }}>{value.price} $</h3>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                    )
-                                    // }
-                                }
+                        {(!props.processingPlaceorder && !props.isLoadingProduct) ?
+                            <ListProduct currentPage={currentPage}
+                                setCurrentPage={setCurrentPage}
+                                pageSize={pageSize}
+                                setPageSize={setPageSize}
+                            /> : <div style={{ textAlign: 'center', margin: '45vh' }}>
+                                <Space size='middle'>
+                                    <Spin size='large' />
+                                </Space>
+                            </div>}
 
-                            })}
-                        </ul>
-                        <Pagination
-                            total={props.total_count}
-                            showSizeChanger
-                            showQuickJumper
-                            showTotal={showTotal}
-                            onChange={handlePagination}
-                            current={currentPage}
-                            onShowSizeChange={onShowSizeChange}
-                            pageSize={pageSize}
-                        />
                     </Col>
                 </Row>
 
@@ -359,18 +333,18 @@ const Checkout = (props) => {
 
 const mapStateToProps = (state, ownProps) => {
     // if (state.product.data) {
-        return {
-            listProduct: state.product.data.items,
-            total_count: state.product.data.total_count,
-            chosenCustomer: state.customer.chosenCustomer,
-            staff: state.staff.staff.staff,
-            cartProps: state.cart,
-            isLoadingProduct: state.product.isLoadingProduct,
-            isLoadingOrder: state.order.isLoadingOrder,
-            isLoadingCustomer: state.customer.isLoadingCustomer,
-            posInfo: state.staff.posInfo,
-            processingPlaceorder: state.cart.processingPlaceorder,
-        }
+    return {
+        listProduct: state.product.data.items,
+        total_count: state.product.data.total_count,
+        chosenCustomer: state.customer.chosenCustomer,
+        staff: state.staff.staff.staff,
+        cartProps: state.cart,
+        isLoadingProduct: state.product.isLoadingProduct,
+        isLoadingOrder: state.order.isLoadingOrder,
+        isLoadingCustomer: state.customer.isLoadingCustomer,
+        posInfo: state.staff.posInfo,
+        processingPlaceorder: state.cart.processingPlaceorder,
+    }
     // }
 }
 
