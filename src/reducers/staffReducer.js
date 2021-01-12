@@ -1,6 +1,29 @@
 import { actionType } from '../constants/index';
 const INITIAL_STATE = {
-    staff: {}
+    staff: {
+        status: 1,
+        message: '',
+        staff: {
+            name: '',
+            email: '',
+            password: '',
+            status: 1,
+            token: '',
+            id: 0
+        },
+        list_pos: [],
+        code: 0,
+    },
+    isLogin: false,
+    isChooseLocation: false,
+    notification_message: '',
+    posInfo: {
+        id: 0,
+        name: '',
+        description: '',
+        location: '',
+        staus: 1,
+    }
 }
 
 const staff = (state = INITIAL_STATE, action) => {

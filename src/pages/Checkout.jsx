@@ -35,6 +35,7 @@ const Checkout = (props) => {
                 })
             }, 1000);
         }
+        setMark(Math.random());
     }, [props.processingPlaceorder])
 
     useEffect(() => {
@@ -53,8 +54,13 @@ const Checkout = (props) => {
     const [pageSize, setPageSize] = useState(10);
     const [keySearch, setKeySearch] = useState('');
     const [isModalCommentVisible, setIsModalCommentVisible] = useState(false);
-
+    const [mark, setMark] = useState(1);
     const isMounted = useRef(false);
+
+    useEffect(() => {
+        props.fetchProduct(null, 1, 10);
+        console.log('fetch product');   
+    }, [])
 
     // hanfle search function
     useEffect(() => {
@@ -113,32 +119,6 @@ const Checkout = (props) => {
         setIsModalAddCustomerVisible(val);
     }
 
-    const isEmpty = (obj) => {
-        for (var prop in obj) {
-            if (obj.hasOwnProperty(prop)) {
-                return false;
-            }
-        }
-
-        return JSON.stringify(obj) === JSON.stringify({});
-    }
-
-    const handlePagination = (page, size) => {
-        setCurrentPage(page);
-        setPageSize(size);
-        props.fetchProduct(null, page, size);
-    }
-
-
-
-    const onShowSizeChange = (current, size) => {
-        setPageSize(size);
-    }
-
-    const showTotal = () => {
-        return `Total ${total} items`
-    }
-
     const getTotalItem = () => {
         let total_item = 0;
         props.cartProps.products.forEach((value, index) => {
@@ -153,34 +133,6 @@ const Checkout = (props) => {
         props.removeCustomer();
     }
 
-    const addToCart = (product) => {
-        let cart_temp = Object.assign({}, props.cartProps);
-        let isNewItems = true;
-        //check if product is exist in current cart
-        cart_temp.products.forEach((element, index) => {
-            if (!element.item) {
-                cart_temp.products[index].qty = 1;
-                cart_temp.products[index].item = product;
-                isNewItems = false;
-            } else if (JSON.stringify(product) === JSON.stringify(element.item)) {
-                cart_temp.products[index].qty++;
-                isNewItems = false
-            }
-
-        });
-
-        if (isNewItems) {
-            cart_temp.products.push({
-                item: product,
-                qty: 1
-            });
-        }
-
-        // caculate total_price
-        cart_temp.total_price += product.price;
-
-        props.cartChange(cart_temp);
-    }
 
     // remove all item of cart
     const onHoldCart = () => {
@@ -245,7 +197,7 @@ const Checkout = (props) => {
                             </a>
                         </div>
                         <div className='icons-bar'>
-                            <a>
+                            <a onClick={onHoldCart}>
                                 <img src='delete-forever.png'></img>
                             </a>
                         </div>
@@ -277,7 +229,7 @@ const Checkout = (props) => {
 
 
                         <div className='cart-content'>
-                            {props.cartProps.products.map((value, index) => {
+                            {props.cartProps.products? props.cartProps.products.map((value, index) => {
                                 if (value.item) {
                                     return (
                                         <a className='cart-item'>
@@ -290,7 +242,7 @@ const Checkout = (props) => {
                                         </a>
                                     )
                                 }
-                            })}
+                            }) : ''}
                         </div>
 
                         <div className="interact-cart">
@@ -306,6 +258,7 @@ const Checkout = (props) => {
                                 setCurrentPage={setCurrentPage}
                                 pageSize={pageSize}
                                 setPageSize={setPageSize}
+                                products={props.listProduct}
                             /> : <div style={{ textAlign: 'center', margin: '45vh' }}>
                                 <Space size='middle'>
                                     <Spin size='large' />

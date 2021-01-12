@@ -2,7 +2,31 @@ import { actionType } from '../constants/index';
 
 
 const INITIAL_STATE = {
-    customer: {}
+    customer: {},
+    isLoadingCustomer: false,
+    data: {
+        items: [],
+        search_criteria: {
+            filter_groups: [],
+        },
+        total_count: 0,
+    },
+    chosenCustomer: {
+        id: 0,
+        group_id: 0,
+        default_billing: "",
+        default_shipping: "",
+        created_at: "",
+        updated_at: "",
+        created_in: "",
+        email: "",
+        firstname: "",
+        lastname: "",
+        store_id: "",
+        website_id: 0,
+        disable_auto_group_change: 0,
+        addresses: []
+    }
 }
 
 const customer = (state = INITIAL_STATE, action) => {

@@ -1,0 +1,16 @@
+.thumnail-child-image{
+    width: auto;
+    height: 100px;
+
+}
+
+.wrapper-child-item{
+    display: flex;
+    justify-content: space-around;
+    border-bottom: solid;
+    border-bottom-color: #d3d7e8;
+    border-bottom-width: thin;
+    padding: 10px 0px;
+    background-color: white;
+    align-items: center;
+}

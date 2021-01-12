@@ -3,7 +3,15 @@ import { actionType } from '../constants/index'
 
 
 const INITIAL_STATE = {
-    order: {}
+    order: {},
+    isLoadingOrder:false,
+    data: {
+        items: [],
+        search_criteria:{
+            filter_groups:[],
+        },
+        total_count: 0
+    }
 }
 
 
