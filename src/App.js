@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import ChooseLocation from './pages/ChooseLocation';
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
-import { Route, Switch, useHistory, Link } from 'react-router-dom';
+import { Route, Switch, useHistory, Link, Router } from 'react-router-dom';
 import OrderHistory from './pages/OrderHistory';
 function App(props) {
 
@@ -35,47 +35,39 @@ function App(props) {
 
   if (!(isLogin in window) && isLogin) {
     if (!props.isChooseLocation) {
+      history.push('/chooseLocation');
       return (
         <div>
-          <ChooseLocation />
+          <Switch>
+            <Route path="/chooseLocation" component={ChooseLocation} exact />
+          </Switch>
         </div>
       );
     }
     else {
-      // history.push('/checkout');
+      history.push('/checkout');
 
       return (
         <div>
-            <Switch>
-              <Route path="/checkout" component={Checkout} exact />
-              <Route path="/order-history" component={OrderHistory} exact />
-            </Switch>
+          <Switch>
+            <Route path="/checkout" component={Checkout} exact />
+            <Route path="/order-history" component={OrderHistory} exact />
+          </Switch>
         </div>
       )
     }
   } else {
+    history.push('/login');
     return (
       <div>
-        <Login />
+        <Switch>
+          <Route exact path='/login' component={Login} />
+        </Switch>
       </div>
     )
   }
 
 }
-
-function Home() {
-  return <h2>Home</h2>;
-}
-
-function About() {
-  return <h2>About</h2>;
-}
-
-function Users() {
-  return <h2>Users</h2>;
-}
-
-
 
 const mapStateToProps = (state) => {
   return {

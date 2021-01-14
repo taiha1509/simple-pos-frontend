@@ -1,7 +1,7 @@
 import { ofType } from 'redux-observable';
 import { map, switchMap, mergeMap } from 'rxjs/operators';
 import { actionType } from '../constants/index';
-import { fetOrderFulfiled, fetchOrder, placeorderFulfiled } from '../actions/OrderAction';
+import { fetOrderFulfiled, fetchOrder, placeorderFulfiled, fetchAdditionalOrderInfoOk, fetchAdditionalOrderInfo } from '../actions/OrderAction';
 
 
 const fetchOrderEpic = (action$, state$) => action$.pipe(
@@ -24,14 +24,53 @@ const fetchOrderEpic = (action$, state$) => action$.pipe(
     })
 );
 
+const fetchAdditionalInfoEpic = (action$, state$) => action$.pipe(
+    ofType(actionType.FETCH_ORDER_FULFILED),
+    mergeMap(async action => {
+        const list_id = [];
+        action.payload.items.forEach(element => {
+            list_id.push(parseInt(element.entity_id));
+        });
+
+
+        return fetchAdditionalOrderInfo(list_id);
+
+    })
+);
+
+
+const fetchAdditionalInfoEpicFulfiled = (action$, state$) => action$.pipe(
+    ofType(actionType.ADDITIONAL_ORDER_INFO),
+    mergeMap(async action => {
+        const list_id = action.payload;
+        let result = {};
+        await fetch(`http://127.0.0.1/magento/rest/V1/api/orders/getAdditionalInfo`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'list_id': list_id
+            }),
+            mode: "cors"
+        }).then(response => response.json())
+            .then(data => { result = data });
+
+            debugger
+        
+        return fetchAdditionalOrderInfoOk(result);
+        
+    })
+);
+
 
 const placeorder = (action$, state$) => action$.pipe(
     ofType(actionType.PLACEORDER),
     mergeMap(async (action) => {
-        debugger
         let result = {};
         const pos_id = state$.value.staff.posInfo.id;
         let bodyData = getOrderInfo(action.payload, pos_id);
+        debugger
         await fetch(`http://127.0.0.1/magento/rest/V1/api/orders/createOrder`, {
             method: "POST",
             headers: {
@@ -122,5 +161,7 @@ const getOrderInfo = (cart, pos_id) => {
 
 export {
     fetchOrderEpic,
-    placeorder
+    placeorder,
+    fetchAdditionalInfoEpic,
+    fetchAdditionalInfoEpicFulfiled
 }

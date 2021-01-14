@@ -1,0 +1,63 @@
+#state-item{
+    background-color: blue;
+    border-radius: 10px;
+    padding: 5px;
+    color: white;
+    margin-right: 10px;
+}
+
+#status-item{
+    background-color: blue;
+    border-radius: 10px;
+    padding: 5px;
+    color: white;
+}
+
+.nothing {
+    display: flex;
+    justify-content: space-around;
+}
+
+.nothing h3:first-child{
+    left: 10px;
+}
+
+#items-ordered{
+    margin-left: 20px
+}
+
+.line-under{
+    border-bottom: solid;
+    border-bottom-color: #ededed;
+    border-bottom-width: thin;
+}
+
+.wrapper-pay-ship{
+    display: flex;
+    justify-content: space-around;
+}
+
+.payment-method{
+    background-color: #ededed;
+    width: 45%;
+}
+
+.shipping-method{
+    background-color: #ededed;
+    width: 45%;
+}
+
+.wrapper-ship-bill{
+    display: flex;
+    justify-content: space-around;
+}
+
+.shipping-address{
+    background-color: #ededed;
+    width: 45%;
+}
+
+.billing-address{
+    background-color: #ededed;
+    width: 45%; 
+}

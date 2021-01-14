@@ -16,6 +16,8 @@ const actionType = {
     CART_UPDATE: 'cart updated',
     PLACEORDER: 'placeorder',
     PLACEORDER_FULFILED: 'placeorder success',
+    ADDITIONAL_ORDER_INFO:' bla bla',
+    ADDITIONAL_ORDER_INFO_OK: 'asdasfvd'
 }
 
 const logicType = {

@@ -3,7 +3,7 @@ import { staff } from '../reducers/staffReducer';
 
 import {fetchProductEpic} from './ProductEpic';
 import {staffLogin} from './StaffEpic';
-import {fetchOrderEpic, placeorder} from './OrderEpic';
+import {fetchOrderEpic, placeorder, fetchAdditionalInfoEpic, fetchAdditionalInfoEpicFulfiled} from './OrderEpic';
 import {fetchCustomerEpic} from './CustomerEpic';
 
 const rootEpic = combineEpics(
@@ -11,7 +11,9 @@ const rootEpic = combineEpics(
     staffLogin,
     fetchOrderEpic,
     fetchCustomerEpic,
-    placeorder
+    placeorder,
+    fetchAdditionalInfoEpicFulfiled,
+    fetchAdditionalInfoEpic,
 );
 
 export default rootEpic;

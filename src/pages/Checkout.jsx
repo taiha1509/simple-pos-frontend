@@ -13,6 +13,7 @@ import { BASE_IMG_URL, logicType } from '../constants/index';
 import { cartUpdate, holdCart } from '../actions/CartAction';
 import { fetchOrder, placeorder } from '../actions/OrderAction';
 import ListProduct from './ListProduct';
+import { useHistory } from 'react-router-dom';
 const Checkout = (props) => {
 
     const INITAL_CART = {
@@ -57,9 +58,10 @@ const Checkout = (props) => {
     const [mark, setMark] = useState(1);
     const isMounted = useRef(false);
 
+
     useEffect(() => {
         props.fetchProduct(null, 1, 10);
-        console.log('fetch product');   
+        console.log('fetch product');
     }, [])
 
     // hanfle search function
@@ -165,11 +167,70 @@ const Checkout = (props) => {
         props.placeorder(props.cartProps, orderPayload);
     }
 
+    const removeItem = (item) => {
+        // const addToCart = (product) => {
+        //     let cart_temp = Object.assign({}, props.cartProps);
+        //     let isNewItems = true;
+        //     //check if product is exist in current cart
+        //     cart_temp.products.forEach((element, index) => {
+        //         if (!element.item) {
+        //             cart_temp.products[index].qty = 1;
+        //             cart_temp.products[index].item = product;
+        //             isNewItems = false;
+        //         } else if (JSON.stringify(product) === JSON.stringify(element.item)) {
+        //             cart_temp.products[index].qty++;
+        //             isNewItems = false
+        //         }
+    
+        //     });
+    
+        //     if (isNewItems) {
+        //         cart_temp.products.push({
+        //             item: product,
+        //             qty: 1
+        //         });
+        //     }
+    
+        //     // caculate total_price
+        //     cart_temp.total_price += product.price;
+    
+        //     props.cartChange(cart_temp);
+        // }
+
+        let cart_temp = Object.assign({}, props.cartProps);
+        cart_temp.products.forEach((element, index) => {
+            if(element.item.id == item.item.id){
+                
+                if(element.qty > 1){
+                    cart_temp.products[index].qty --;
+                    cart_temp.total_price -= item.item.price;
+                }else{
+                    // this case qty = 1
+                    if(cart_temp.products.length > 1){
+                        cart_temp.products.splice(index, index + 1);
+                        cart_temp.total_price -= item.item.price;
+                    }else{
+                        //cart null
+                        cart_temp.products = [{
+                            qty: 0,
+                            item: null
+                        }]
+                        cart_temp.total_price = 0;
+                    }
+                }
+            }
+        });  
+
+        props.cartChange(cart_temp);
+    }
+
     return (
         <div>
             { (!props.isLoadingOrder && !props.isLoadingCustomer) ? <div><Row className="row-header">
                 <Col span={1} className='align-center col1'>
-                    <a onClick={() => setTabDrwerVisible(true)}><img id='menu-icon' src="icons8-menu-48.png" alt="image"></img></a>
+                    <a onClick={() => {
+                        setTabDrwerVisible(true);
+                    }}><img id='menu-icon' src="icons8-menu-48.png" alt="image"></img></a>
                 </Col>
                 <Col span={5} className='align-center col2'>
                     <h2 style={{ margin: + "15" }}>Cart</h2>
@@ -229,17 +290,23 @@ const Checkout = (props) => {
 
 
                         <div className='cart-content'>
-                            {props.cartProps.products? props.cartProps.products.map((value, index) => {
+                            {props.cartProps.products ? props.cartProps.products.map((value, index) => {
                                 if (value.item) {
                                     return (
-                                        <a className='cart-item'>
-                                            <div className='cart-item-image'>
-                                                <img src={BASE_IMG_URL + value.item.custom_attributes[0].value} />
-                                                <p className='cart-item-qty'>{value.qty}</p>
-                                            </div>
-                                            <h3 className='cart-item-name'>{value.item.name}</h3>
-                                            <p className='cart-item-price'>${value.item.price * value.qty}</p>
-                                        </a>
+                                        <div className='cart-item-wrapper'>
+                                            <a className='cart-item'>
+                                                <div className='cart-item-image'>
+                                                    <img src={BASE_IMG_URL + value.item.custom_attributes[0].value} />
+                                                    <p className='cart-item-qty'>{value.qty}</p>
+                                                </div>
+                                                <h3 className='cart-item-name'>{value.item.name}</h3>
+                                                <p className='cart-item-price'>${value.item.price * value.qty}</p>
+                                            </a>
+                                            <a>
+                                                <img src='rm.png' className='icon-remove-item' onClick={() => removeItem(value)}></img>
+                                            </a>
+                                        </div>
+
                                     )
                                 }
                             }) : ''}
@@ -251,30 +318,30 @@ const Checkout = (props) => {
                         </div>
                     </Col>
 
-                    {/* side for product */}
-                    <Col span={18} className='col3' style={{ backgroundColor: '#f0f0f0' }}>
-                        {(!props.processingPlaceorder && !props.isLoadingProduct) ?
-                            <ListProduct currentPage={currentPage}
-                                setCurrentPage={setCurrentPage}
-                                pageSize={pageSize}
-                                setPageSize={setPageSize}
-                                products={props.listProduct}
-                            /> : <div style={{ textAlign: 'center', margin: '45vh' }}>
-                                <Space size='middle'>
-                                    <Spin size='large' />
-                                </Space>
-                            </div>}
+                        {/* side for product */}
+                        <Col span={18} className='col3' style={{ backgroundColor: '#f0f0f0' }}>
+                            {(!props.processingPlaceorder && !props.isLoadingProduct) ?
+                                <ListProduct currentPage={currentPage}
+                                    setCurrentPage={setCurrentPage}
+                                    pageSize={pageSize}
+                                    setPageSize={setPageSize}
+                                    products={props.listProduct}
+                                /> : <div style={{ textAlign: 'center', margin: '45vh' }}>
+                                    <Space size='middle'>
+                                        <Spin size='large' />
+                                    </Space>
+                                </div>}
 
-                    </Col>
+                        </Col>
                 </Row>
 
-                <TabDrawer visible={tabDrawerVisible} closeTabDrawer={closeTabDrawer} />
-                <AddCustomer isModalVisible={isModalAddCustomerVisible} setIsModalVisiblle={handleModalAddCustomerVisible} />
+                    <TabDrawer visible={tabDrawerVisible} closeTabDrawer={closeTabDrawer} />
+                    <AddCustomer isModalVisible={isModalAddCustomerVisible} setIsModalVisiblle={handleModalAddCustomerVisible} />
 
-                {/* comment side */}
-                <Modal title="Add comment to this order" visible={isModalCommentVisible} onOk={handleCommentOk} onCancel={handleCommentCancel}>
-                    <TextArea rows={4} onChange={onChangComment} value={props.cartProps.comment} />
-                </Modal></div> : <div style={{ textAlign: 'center', margin: '45vh' }}>
+                    {/* comment side */}
+                    <Modal title="Add comment to this order" visible={isModalCommentVisible} onOk={handleCommentOk} onCancel={handleCommentCancel}>
+                        <TextArea rows={4} onChange={onChangComment} value={props.cartProps.comment} />
+                    </Modal></div> : <div style={{ textAlign: 'center', margin: '45vh' }}>
                     <Space size='middle'>
                         <Spin size='large' />
                     </Space>
@@ -287,7 +354,7 @@ const Checkout = (props) => {
 const mapStateToProps = (state, ownProps) => {
     // if (state.product.data) {
     return {
-        listProduct: state.product.data.items,
+                listProduct: state.product.data.items,
         total_count: state.product.data.total_count,
         chosenCustomer: state.customer.chosenCustomer,
         staff: state.staff.staff.staff,
@@ -303,12 +370,12 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        fetchProduct: (filter, page, pageSize) => dispatch(fetchProduct(filter, page, pageSize)),
+                fetchProduct: (filter, page, pageSize) => dispatch(fetchProduct(filter, page, pageSize)),
         removeCustomer: () => dispatch(chooseGuest()),
         cartChange: (payload) => dispatch(cartUpdate(payload)),
         cartHold: () => dispatch(holdCart()),
         placeorder: (cart, orderPayload) => {
-            dispatch(placeorder(cart));
+                dispatch(placeorder(cart));
             dispatch(fetchProduct(null, 1, 10));
             dispatch(fetchOrder(orderPayload));
         },

@@ -1,4 +1,5 @@
 
+import { act } from 'react-dom/test-utils'
 import { actionType } from '../constants/index'
 
 
@@ -11,7 +12,8 @@ const INITIAL_STATE = {
             filter_groups:[],
         },
         total_count: 0
-    }
+    },
+    additional_info: null
 }
 
 
@@ -28,6 +30,12 @@ const order = (state = INITIAL_STATE, action) => {
                 ...state,
                 isLoadingOrder: false,
                 data: action.payload
+            }
+
+        case actionType.ADDITIONAL_ORDER_INFO_OK:
+            return {
+                ...state,
+                additional_info: action.payload
             }
         default:
             return state;

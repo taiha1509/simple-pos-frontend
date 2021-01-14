@@ -4,11 +4,13 @@ import { useCookies } from 'react-cookie';
 import { dispatch } from 'rxjs/internal/observable/pairs';
 import { logout } from '../actions/StaffAction';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 const TabDrawer = (props) => {
 
   const [cookies, setCookies, removeCookies] = useCookies(['isLogin', 'staff']);
+
+  const history = useHistory();
 
   const style = {
     "background-color": '#262a41',
@@ -49,7 +51,7 @@ const TabDrawer = (props) => {
         <Link to='/checkout'>
           <h2 style={{ color: 'wheat' }}>Checkout</h2>
         </Link>
-        <Link to='/order-history'>
+        <Link to='/order-history' onClick={() => history.push('/order-history')}>
           <h2 style={{ color: 'wheat' }}>Order History</h2>
         </Link>
         <Link to='/checkout'>

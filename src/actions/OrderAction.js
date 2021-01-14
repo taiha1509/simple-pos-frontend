@@ -19,9 +19,20 @@ const placeorderFulfiled = () => ({
     type: actionType.PLACEORDER_FULFILED
 })
 
+const fetchAdditionalOrderInfo = (list_id) => ({
+    type: actionType.ADDITIONAL_ORDER_INFO,
+    payload: list_id,
+})
+
+const fetchAdditionalOrderInfoOk = (data) => ({
+    type: actionType.ADDITIONAL_ORDER_INFO_OK,
+    payload: data
+})
 export{
     fetchOrder,
     fetOrderFulfiled,
     placeorder,
-    placeorderFulfiled
+    placeorderFulfiled,
+    fetchAdditionalOrderInfo,
+    fetchAdditionalOrderInfoOk
 }

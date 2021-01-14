@@ -1,0 +1,31 @@
+.row1-col1{
+    border-right: solid;
+    border-right-color: #adade4;
+    border-right-width: thin;
+    min-height: 5vh;
+}
+
+.row1-col2{
+
+}
+
+.row1{
+    border-bottom: solid;
+    border-bottom-color: #adade4;
+    border-bottom-width: thin;
+}
+
+.row2-col1{
+    border-right: solid;
+    border-right-color: #adade4;
+    border-right-width: thin;
+    min-height: 95vh;
+}
+
+.wrapper-order-item{
+    display: flex;
+    justify-content: space-around;
+    border-bottom: solid;
+    border-bottom-color: #d3d7e8;
+    border-bottom-width: thin;
+}
