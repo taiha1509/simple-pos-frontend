@@ -181,35 +181,35 @@ const Checkout = (props) => {
         //             cart_temp.products[index].qty++;
         //             isNewItems = false
         //         }
-    
+
         //     });
-    
+
         //     if (isNewItems) {
         //         cart_temp.products.push({
         //             item: product,
         //             qty: 1
         //         });
         //     }
-    
+
         //     // caculate total_price
         //     cart_temp.total_price += product.price;
-    
+
         //     props.cartChange(cart_temp);
         // }
 
         let cart_temp = Object.assign({}, props.cartProps);
         cart_temp.products.forEach((element, index) => {
-            if(element.item.id == item.item.id){
-                
-                if(element.qty > 1){
-                    cart_temp.products[index].qty --;
+            if (element.item.id == item.item.id) {
+
+                if (element.qty > 1) {
+                    cart_temp.products[index].qty--;
                     cart_temp.total_price -= item.item.price;
-                }else{
+                } else {
                     // this case qty = 1
-                    if(cart_temp.products.length > 1){
+                    if (cart_temp.products.length > 1) {
                         cart_temp.products.splice(index, index + 1);
                         cart_temp.total_price -= item.item.price;
-                    }else{
+                    } else {
                         //cart null
                         cart_temp.products = [{
                             qty: 0,
@@ -219,7 +219,7 @@ const Checkout = (props) => {
                     }
                 }
             }
-        });  
+        });
 
         props.cartChange(cart_temp);
     }
@@ -318,30 +318,30 @@ const Checkout = (props) => {
                         </div>
                     </Col>
 
-                        {/* side for product */}
-                        <Col span={18} className='col3' style={{ backgroundColor: '#f0f0f0' }}>
-                            {(!props.processingPlaceorder && !props.isLoadingProduct) ?
-                                <ListProduct currentPage={currentPage}
-                                    setCurrentPage={setCurrentPage}
-                                    pageSize={pageSize}
-                                    setPageSize={setPageSize}
-                                    products={props.listProduct}
-                                /> : <div style={{ textAlign: 'center', margin: '45vh' }}>
-                                    <Space size='middle'>
-                                        <Spin size='large' />
-                                    </Space>
-                                </div>}
+                    {/* side for product */}
+                    <Col span={18} className='col3' style={{ backgroundColor: '#f0f0f0' }}>
+                        {(!props.processingPlaceorder && !props.isLoadingProduct) ?
+                            <ListProduct currentPage={currentPage}
+                                setCurrentPage={setCurrentPage}
+                                pageSize={pageSize}
+                                setPageSize={setPageSize}
+                                products={props.listProduct}
+                            /> : <div style={{ textAlign: 'center', margin: '45vh' }}>
+                                <Space size='middle'>
+                                    <Spin size='large' />
+                                </Space>
+                            </div>}
 
-                        </Col>
+                    </Col>
                 </Row>
 
-                    <TabDrawer visible={tabDrawerVisible} closeTabDrawer={closeTabDrawer} />
-                    <AddCustomer isModalVisible={isModalAddCustomerVisible} setIsModalVisiblle={handleModalAddCustomerVisible} />
+                <TabDrawer visible={tabDrawerVisible} closeTabDrawer={closeTabDrawer} />
+                <AddCustomer isModalVisible={isModalAddCustomerVisible} setIsModalVisiblle={handleModalAddCustomerVisible} />
 
-                    {/* comment side */}
-                    <Modal title="Add comment to this order" visible={isModalCommentVisible} onOk={handleCommentOk} onCancel={handleCommentCancel}>
-                        <TextArea rows={4} onChange={onChangComment} value={props.cartProps.comment} />
-                    </Modal></div> : <div style={{ textAlign: 'center', margin: '45vh' }}>
+                {/* comment side */}
+                <Modal title="Add comment to this order" visible={isModalCommentVisible} onOk={handleCommentOk} onCancel={handleCommentCancel}>
+                    <TextArea rows={4} onChange={onChangComment} value={props.cartProps.comment} />
+                </Modal></div> : <div style={{ textAlign: 'center', margin: '45vh' }}>
                     <Space size='middle'>
                         <Spin size='large' />
                     </Space>
@@ -354,7 +354,7 @@ const Checkout = (props) => {
 const mapStateToProps = (state, ownProps) => {
     // if (state.product.data) {
     return {
-                listProduct: state.product.data.items,
+        listProduct: state.product.data.items,
         total_count: state.product.data.total_count,
         chosenCustomer: state.customer.chosenCustomer,
         staff: state.staff.staff.staff,
@@ -370,12 +370,12 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-                fetchProduct: (filter, page, pageSize) => dispatch(fetchProduct(filter, page, pageSize)),
+        fetchProduct: (filter, page, pageSize) => dispatch(fetchProduct(filter, page, pageSize)),
         removeCustomer: () => dispatch(chooseGuest()),
         cartChange: (payload) => dispatch(cartUpdate(payload)),
         cartHold: () => dispatch(holdCart()),
         placeorder: (cart, orderPayload) => {
-                dispatch(placeorder(cart));
+            dispatch(placeorder(cart));
             dispatch(fetchProduct(null, 1, 10));
             dispatch(fetchOrder(orderPayload));
         },

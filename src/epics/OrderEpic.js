@@ -19,6 +19,8 @@ const fetchOrderEpic = (action$, state$) => action$.pipe(
         }).then(response => response.json())
             .then(data => { result = data });
 
+        console.log(result);
+        debugger
         return fetOrderFulfiled(result);
 
     })
