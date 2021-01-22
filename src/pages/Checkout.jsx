@@ -164,41 +164,14 @@ const Checkout = (props) => {
 
     const onPlaceorder = () => {
         const orderPayload = props.posInfo;
+        setCurrentPage(1);
         props.placeorder(props.cartProps, orderPayload);
     }
 
     const removeItem = (item) => {
-        // const addToCart = (product) => {
-        //     let cart_temp = Object.assign({}, props.cartProps);
-        //     let isNewItems = true;
-        //     //check if product is exist in current cart
-        //     cart_temp.products.forEach((element, index) => {
-        //         if (!element.item) {
-        //             cart_temp.products[index].qty = 1;
-        //             cart_temp.products[index].item = product;
-        //             isNewItems = false;
-        //         } else if (JSON.stringify(product) === JSON.stringify(element.item)) {
-        //             cart_temp.products[index].qty++;
-        //             isNewItems = false
-        //         }
-
-        //     });
-
-        //     if (isNewItems) {
-        //         cart_temp.products.push({
-        //             item: product,
-        //             qty: 1
-        //         });
-        //     }
-
-        //     // caculate total_price
-        //     cart_temp.total_price += product.price;
-
-        //     props.cartChange(cart_temp);
-        // }
-
         let cart_temp = Object.assign({}, props.cartProps);
         cart_temp.products.forEach((element, index) => {
+            debugger
             if (element.item.id == item.item.id) {
 
                 if (element.qty > 1) {
@@ -207,7 +180,7 @@ const Checkout = (props) => {
                 } else {
                     // this case qty = 1
                     if (cart_temp.products.length > 1) {
-                        cart_temp.products.splice(index, index + 1);
+                        cart_temp.products.splice(index, 1);
                         cart_temp.total_price -= item.item.price;
                     } else {
                         //cart null
@@ -221,6 +194,7 @@ const Checkout = (props) => {
             }
         });
 
+        console.log(cart_temp);
         props.cartChange(cart_temp);
     }
 

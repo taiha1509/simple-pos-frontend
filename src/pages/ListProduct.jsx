@@ -102,10 +102,11 @@ const ListProduct = (props) => {
                     } else if (value.type_id == "configurable") {
                         total++;
                         const listProduct = props.products.filter((item, i) => {
-                            if (item.parent_id == value.id) {
+                            if (item.parent_id == value.id && item.price != 0 && item.qty != 0) {
                                 return item;
                             }
                         });
+                        // console.log(listProduct);
                         return (
                             <li className='product-item'>
                                 <a onClick={() => showChildProduct(listProduct)}>

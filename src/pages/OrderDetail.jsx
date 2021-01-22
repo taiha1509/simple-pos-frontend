@@ -72,9 +72,20 @@ const OrderDetail = (props) => {
                         <h3 id='items-orderd'>Items Ordered</h3>
                     </div>
 
-                    <div>
-                        <h3></h3>
-                    </div>
+                    {/* <div>
+                        <ul>
+                            {props.order.additional_info[props.indexChosen].items ? props.order.additional_info[props.indexChosen].items.map((value, index) => {
+                                return (
+                                    <li>
+                                        <h3>{value.name}</h3>
+                                        <h3>{value.price}</h3>
+                                        <h3>{value.qty}</h3>
+                                    </li>
+                                )
+                            }) : ''}
+                            // {console.log(props.order.additional_info[props.indexChosen])}
+                        </ul>
+                    </div> */}
                 </div>
 
 
@@ -140,6 +151,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         posInfo: state.staff.posInfo,
         customer: state.customer,
+        order: state.order
     }
 }
 

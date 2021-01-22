@@ -11,6 +11,7 @@ const OrderHistory = (props) => {
     const [chosenOrder, setChosenOrder] = useState();
     const [tabDrawerVisible, setTabDrwerVisible] = useState(false);
     const [textSearch, setTextSearch] = useState('');
+    const [indexChosen, setIndexChosen] = useState(0);
     useEffect(() => {
         const lsOrder = sortOrderByDate(props.orders);
         setListOrderWithDate(lsOrder);
@@ -70,10 +71,11 @@ const OrderHistory = (props) => {
         }
     }
 
-    const handleClickOrderItem = (item) => {
+    const handleClickOrderItem = (item, index) => {
         document.getElementById('title').innerHTML = item.entity_id;
 
         setChosenOrder(item);
+        setIndexChosen(index);
     }
 
     const closeTabDrawer = () => {
@@ -139,7 +141,7 @@ const OrderHistory = (props) => {
                                             }
                                             if (flag) {
                                                 return (
-                                                    <a onClick={() => handleClickOrderItem(e)} className='wrapper-order-item'>
+                                                    <a onClick={() => handleClickOrderItem(e, i)} className='wrapper-order-item'>
                                                         <div>
                                                             <h3>{e.entity_id}</h3>
                                                             <p>{e.state}</p>
@@ -159,7 +161,7 @@ const OrderHistory = (props) => {
                     </ul>
                 </Col>
                 <Col span={17} className='row2-col2'>
-                    <OrderDetail item={chosenOrder} />
+                    <OrderDetail item={chosenOrder} indexChosen={indexChosen}/>
                 </Col>
             </Row>
 
